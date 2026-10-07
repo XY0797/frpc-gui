@@ -16,6 +16,7 @@ package log
 
 import (
 	"bytes"
+	"io"
 	"os"
 
 	"github.com/fatedier/golib/log"
@@ -37,6 +38,17 @@ func init() {
 		log.AddCallerSkip(1),
 		log.WithLevel(log.InfoLevel),
 	)
+}
+
+func InitLoggerCustom(logPath string, levelStr string, maxDays int, disableLogColor bool, customWrite io.Writer) {
+	options := []log.Option{}
+	options = append(options, log.WithOutput(customWrite))
+	level, err := log.ParseLevel(levelStr)
+	if err != nil {
+		level = log.InfoLevel
+	}
+	options = append(options, log.WithLevel(level))
+	Logger = Logger.WithOptions(options...)
 }
 
 func InitLogger(logPath string, levelStr string, maxDays int, disableLogColor bool) {
